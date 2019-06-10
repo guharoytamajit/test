@@ -1,1 +1,82 @@
-hello
+package com;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+
+
+
+public class Main {
+public static void main(String[] args) throws Exception {
+	Main http = new Main();
+	http.sendGet();
+}
+
+// HTTP GET request
+private void sendGet() throws Exception {
+
+	String url = "https://raw.githubusercontent.com/guharoytamajit/test/master/hw";
+//	String url = "https://raw.githubusercontent.com/guharoytamajit/springboot-angular-todos-example/master/pom.xml";
+	URL obj = new URL(url);
+	HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+	// optional default is GET
+	con.setRequestMethod("GET");
+
+	//add request header
+
+	int responseCode = con.getResponseCode();
+
+	BufferedReader in = new BufferedReader(
+	        new InputStreamReader(con.getInputStream()));
+	String inputLine;
+	StringBuffer response = new StringBuffer();
+
+	while ((inputLine = in.readLine()) != null) {
+		response.append(inputLine);
+	}
+	in.close();
+
+	//print result
+	String string = response.toString();
+	System.out.println(string);
+	
+	
+	
+	
+	
+	 
+	 DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+//     documentBuilderFactory.setNamespaceAware(true);
+     DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+//     Document doc = documentBuilder.parse(new java.io.ByteArrayInputStream(response.toString().getBytes()));
+     Document doc = documentBuilder.parse(new java.io.ByteArrayInputStream(string.getBytes()));;
+
+     XPathFactory xpathFactory = XPathFactory.newInstance();
+     XPath xpath = xpathFactory.newXPath();
+
+//     XPathExpression expr = xpath.compile("//totalResultSetSize");
+     XPathExpression expr = xpath.compile("//adUnitCode");
+     String type = (String) expr.evaluate(doc, XPathConstants.STRING);
+     System.out.println("O/P " + type);
+     
+
+
+}
+}
